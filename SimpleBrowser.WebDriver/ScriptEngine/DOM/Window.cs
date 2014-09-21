@@ -4,15 +4,31 @@ namespace SimpleBrowser.WebDriver.ScriptEngine.DOM
 {
 	public class Window
 	{
+		private SimpleBrowserDriver _browser;
 		private ScriptHost _host;
-		public Window(ScriptHost host)
+		public Window(SimpleBrowserDriver browser, ScriptHost host)
 		{
+			_browser = browser;
 			_host = host;
 		}
 
-		public void alert(string msg)
+		public void alert(object msg)
 		{
-			_host.LogAlert(msg);
+			_host.LogAlert(msg.ToString());
+		}
+
+		public object location
+		{
+			get
+			{
+				return new WindowLocation(_browser, _browser.Browser.Url);
+			}
+			set
+			{
+				var uri = new Uri(_browser.Browser.Url, value.ToString());
+
+				_browser.Navigate().GoToUrl(uri);
+			}
 		}
 	}
 }

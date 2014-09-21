@@ -61,6 +61,7 @@
     <Compile Include="ScriptEngine\DOM\Console.cs" />
     <Compile Include="ScriptEngine\DOM\Document.cs" />
     <Compile Include="ScriptEngine\DOM\HtmlWebElement.cs" />
+    <Compile Include="ScriptEngine\DOM\WindowLocation.cs" />
     <Compile Include="ScriptEngine\ScriptHost.cs" />
     <Compile Include="ScriptEngine\DOM\Window.cs" />
     <Compile Include="SimpleBrowserDriver.cs" />

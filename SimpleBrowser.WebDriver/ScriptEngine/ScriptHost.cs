@@ -21,7 +21,7 @@ namespace SimpleBrowser.WebDriver.ScriptEngine
 		{
 			_browser = browser;
 
-			var window = new Window(this);
+			var window = new Window(_browser, this);
 
 			_engine = new V8ScriptEngine();
 			_engine.AddHostObject("window", HostItemFlags.GlobalMembers, window);
