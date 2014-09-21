@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SimpleBrowser;
 
 namespace SimpleBrowser.WebDriver
 {
@@ -20,6 +21,9 @@ namespace SimpleBrowser.WebDriver
 		void NavigateBack();
 		void NavigateForward();
 		string WindowHandle { get; }
+
+		event Action<Browser, HtmlElement> Clicked;
+		Browser GetBrowser();
 		IEnumerable<IBrowser> Browsers { get; }
 		IEnumerable<IBrowser> Frames { get; }
 		void Close();

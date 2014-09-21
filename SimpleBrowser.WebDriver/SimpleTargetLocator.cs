@@ -37,6 +37,11 @@ namespace SimpleBrowser.WebDriver
 			return Frame(windowHandle);
 		}
 
+		public IWebDriver ParentFrame()
+		{
+			throw new NotImplementedException();
+		}
+
 		public IWebDriver Frame(string frameName)
 		{
 			var frame = _browser.Frames.FirstOrDefault(b => b.WindowHandle == frameName);

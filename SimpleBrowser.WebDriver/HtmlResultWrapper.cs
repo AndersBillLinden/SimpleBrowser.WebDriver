@@ -32,6 +32,11 @@ namespace SimpleBrowser.WebDriver
 			get { return _htmlResult.XElement; }
 		}
 
+		public HtmlElement HtmlElement
+		{
+			get { return _htmlResult.CurrentElement; }
+		}
+
 
 		public bool Checked
 		{

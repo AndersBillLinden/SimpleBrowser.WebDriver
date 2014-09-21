@@ -53,6 +53,11 @@ namespace SimpleBrowser.WebDriver
 			throw new NotImplementedException();
 		}
 
+		public HtmlElement AsHtmlElement()
+		{
+			return _my.HtmlElement;
+		}
+
 		public Point Location
 		{
 			get { throw new NotImplementedException(); }

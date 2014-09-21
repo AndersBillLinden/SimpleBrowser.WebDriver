@@ -8,12 +8,14 @@ namespace SimpleBrowser.WebDriver
 {
 	public class SimpleNavigate : INavigation
 	{
+		private readonly SimpleBrowserDriver _driver;
 		private readonly IBrowser _browser;
 
 		private readonly List<string> _urlCache = new List<string>();
 
-		public SimpleNavigate(IBrowser browser)
+		public SimpleNavigate(SimpleBrowserDriver driver, IBrowser browser)
 		{
+			_driver = driver;
 			_browser = browser;
 		}
 
@@ -23,11 +25,13 @@ namespace SimpleBrowser.WebDriver
 		public void Back()
 		{
 			_browser.NavigateBack();
+			_driver.RunScripts();
 		}
 
 		public void Forward()
 		{
 			_browser.NavigateForward();
+			_driver.RunScripts();
 		}
 
 		public void GoToUrl(Uri url)
@@ -40,6 +44,19 @@ namespace SimpleBrowser.WebDriver
 		{
 			if (url == null) return;
 			_browser.Navigate(url);
+			_driver.RunScripts();
+		}
+
+		public void FetchUrl(Uri url)
+		{
+			if (url == null) return;
+			FetchUrl(url.ToString());
+		}
+
+		public void FetchUrl(string url)
+		{
+			if (url == null) return;
+			_browser.Navigate(url);
 		}
 
 		public void Refresh()
@@ -47,6 +64,7 @@ namespace SimpleBrowser.WebDriver
 			var url = _browser.Url;
 			_browser.NavigateBack();
 			_browser.Navigate(url.ToString());
+			_driver.RunScripts();
 		}
 
 		#endregion

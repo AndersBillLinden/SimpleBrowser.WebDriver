@@ -11,12 +11,14 @@ namespace SimpleBrowser.WebDriver
 		public BrowserWrapper()
 		{
 			_my = new Browser();
-			_my.RequestLogged += new Action<Browser, HttpRequestLog>(HandleRequestLogged);
+			_my.RequestLogged += HandleRequestLogged;
+			_my.Clicked += HandleClickEvent;
 		}
 		public BrowserWrapper(Browser b)
 		{
 			_my = b;
-			_my.RequestLogged += new Action<Browser, HttpRequestLog>(HandleRequestLogged);
+			_my.RequestLogged += HandleRequestLogged;
+			_my.Clicked += HandleClickEvent;
 		}
 
 
@@ -63,6 +65,13 @@ namespace SimpleBrowser.WebDriver
 			get { return _my.WindowHandle; }
 		}
 
+		public event Action<Browser, HtmlElement> Clicked;
+
+		public Browser GetBrowser()
+		{
+			return _my;
+		}
+
 		public IEnumerable<IBrowser> Browsers
 		{
 			get { return Browser.Windows.Select(b => new BrowserWrapper(b)); }
@@ -86,6 +95,11 @@ namespace SimpleBrowser.WebDriver
 			}
 		}
 
+		private void HandleClickEvent(Browser b, HtmlElement element)
+		{
+			if (Clicked != null)
+				Clicked(b, element);
+		}
 
 		public KeyStateOption KeyState
 		{

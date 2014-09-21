@@ -25,5 +25,6 @@ namespace SimpleBrowser.WebDriver
 
 		IHtmlResult Select(string p);
 		XElement XElement { get; }
+		HtmlElement HtmlElement { get; }
 	}
 }
