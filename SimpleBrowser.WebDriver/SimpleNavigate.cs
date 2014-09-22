@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OpenQA.Selenium;
+using SimpleBrowser.WebDriver.ScriptEngine;
 
 namespace SimpleBrowser.WebDriver
 {
@@ -25,13 +26,13 @@ namespace SimpleBrowser.WebDriver
 		public void Back()
 		{
 			_browser.NavigateBack();
-			_driver.RunScripts();
+			_driver.ScriptHost = (ScriptHost)_browser.GetBrowser().CurrentScriptHost;
 		}
 
 		public void Forward()
 		{
 			_browser.NavigateForward();
-			_driver.RunScripts();
+			_driver.ScriptHost = (ScriptHost)_browser.GetBrowser().CurrentScriptHost;
 		}
 
 		public void GoToUrl(Uri url)
@@ -44,6 +45,8 @@ namespace SimpleBrowser.WebDriver
 		{
 			if (url == null) return;
 			_browser.Navigate(url);
+			_driver.ScriptHost = new ScriptHost(_driver);
+			_browser.GetBrowser().CurrentScriptHost = _driver.ScriptHost;
 			_driver.RunScripts();
 		}
 
@@ -64,6 +67,7 @@ namespace SimpleBrowser.WebDriver
 			var url = _browser.Url;
 			_browser.NavigateBack();
 			_browser.Navigate(url.ToString());
+			_browser.GetBrowser().CurrentScriptHost = new ScriptHost(_driver);
 			_driver.RunScripts();
 		}
 

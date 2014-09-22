@@ -6,15 +6,17 @@ namespace SimpleBrowser.WebDriver.ScriptEngine.DOM
 	{
 		private SimpleBrowserDriver _browser;
 		private ScriptHost _host;
-		public Window(SimpleBrowserDriver browser, ScriptHost host)
+		private ScriptLog _log;
+		public Window(SimpleBrowserDriver browser, ScriptHost host, ScriptLog log)
 		{
 			_browser = browser;
 			_host = host;
+			_log = log;
 		}
 
 		public void alert(object msg)
 		{
-			_host.LogAlert(msg.ToString());
+			_log.LogAlert(msg.ToString());
 		}
 
 		public object location

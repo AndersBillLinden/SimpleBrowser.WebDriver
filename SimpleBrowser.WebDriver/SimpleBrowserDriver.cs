@@ -16,15 +16,15 @@ namespace SimpleBrowser.WebDriver
 	public class SimpleBrowserDriver : IWebDriver, IHasInputDevices
 	{
 		IBrowser _my;
-		ScriptHost _scriptHost;
+		public ScriptHost ScriptHost;
+		public ScriptLog ScriptLog = new ScriptLog();
 		public SimpleBrowserDriver()
 		{
-			_scriptHost = new ScriptHost(this);
 			_my = new BrowserWrapper();
 		}
 		public SimpleBrowserDriver(IBrowser browser)
 		{
-			_scriptHost = new ScriptHost(this);
+			ScriptHost = new ScriptHost(this);
 			_my = browser;
 		}
 		#region IWebDriver Members
@@ -97,11 +97,6 @@ namespace SimpleBrowser.WebDriver
 			{
 				return _my.GetBrowser();
 			}
-		}
-
-		public ScriptHost ScriptHost
-		{
-			get { return _scriptHost; }
 		}
 
 		#endregion
@@ -180,12 +175,12 @@ namespace SimpleBrowser.WebDriver
 					var url = new Uri(_my.Url, src);
 					var html = _my.GetBrowser().CreateReferenceView().Fetch(url);
 
-					_scriptHost.AddScriptBlock(html);
+					ScriptHost.AddScriptBlock(html);
 				}
 
 				var scriptText = script.Text;
 
-				_scriptHost.AddScriptBlock(scriptText);
+				ScriptHost.AddScriptBlock(scriptText);
 			}
 
 			var bodies = FindElements(By.TagName("body"));
@@ -197,7 +192,7 @@ namespace SimpleBrowser.WebDriver
 				var onload = body.GetAttribute("onload");
 
 				if (onload != null)
-					_scriptHost.AddScriptBlock(onload);
+					ScriptHost.AddScriptBlock(onload);
 			}
 
 			_my.Clicked += OnClick;
@@ -208,7 +203,7 @@ namespace SimpleBrowser.WebDriver
 			var onclick = element.GetAttributeValue("onclick");
 
 			if (onclick != null)
-				_scriptHost.AddScriptBlock(onclick);
+				ScriptHost.AddScriptBlock(onclick);
 		}
 	}
 }

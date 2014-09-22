@@ -2,15 +2,15 @@
 {
 	public class Console
 	{
-		private ScriptHost _host;
-		public Console(ScriptHost host)
+		private ScriptLog _log;
+		public Console(ScriptLog log)
 		{
-			_host = host;
+			_log = log;
 		}
 
 		public void log(string msg)
 		{
-			_host.LogConsoleLog(msg);
+			_log.LogConsoleLog(msg);
 		}
 	}
 }

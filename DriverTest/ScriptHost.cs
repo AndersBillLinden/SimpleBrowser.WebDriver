@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DriverTest.Extensions;
 using DriverTest.Helpers;
+using Microsoft.ClearScript;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using SimpleBrowser;
@@ -26,7 +28,7 @@ namespace DriverTest
 				}
 			}, "http://localhost/test.html");
 
-			Assert.AreEqual("hi", browser.ScriptHost.Alerts.ToCommaString());
+			Assert.AreEqual("hi", browser.ScriptLog.Alerts.ToCommaString());
 		}
 
 		[Test]
@@ -43,7 +45,7 @@ namespace DriverTest
 				}
 			}, "http://localhost/test.html");
 
-			Assert.AreEqual("hi", browser.ScriptHost.ConsoleLogs.ToCommaString());
+			Assert.AreEqual("hi", browser.ScriptLog.ConsoleLogs.ToCommaString());
 		}
 
 		[Test]
@@ -69,7 +71,7 @@ namespace DriverTest
 				}
 			}, "http://localhost/test.html");
 
-			Assert.AreEqual("loading,loading more,loaded", browser.ScriptHost.Alerts.ToCommaString());
+			Assert.AreEqual("loading,loading more,loaded", browser.ScriptLog.Alerts.ToCommaString());
 		}
 
 		[Test]
@@ -95,7 +97,7 @@ namespace DriverTest
 			}, "http://localhost/test.html");
 
 			browser.FindElement(By.Id("foo")).Click();
-			Assert.AreEqual("clicked", browser.ScriptHost.Alerts.ToCommaString());
+			Assert.AreEqual("clicked", browser.ScriptLog.Alerts.ToCommaString());
 		}
 
 		[Test]
@@ -118,7 +120,7 @@ namespace DriverTest
 				}
 			}, "http://localhost/a/test.html");
 
-			Assert.AreEqual("alert from test.js", browser.ScriptHost.Alerts.ToCommaString());
+			Assert.AreEqual("alert from test.js", browser.ScriptLog.Alerts.ToCommaString());
 		}
 
 		[Test]
@@ -141,7 +143,7 @@ namespace DriverTest
 				}
 			}, "http://localhost/a/test.html");
 
-			Assert.AreEqual("alert from ../test.js", browser.ScriptHost.Alerts.ToCommaString());
+			Assert.AreEqual("alert from ../test.js", browser.ScriptLog.Alerts.ToCommaString());
 		}
 
 		[Test]
@@ -164,7 +166,7 @@ namespace DriverTest
 				}
 			}, "http://localhost/a/test.html");
 
-			Assert.AreEqual("alert from /test.js", browser.ScriptHost.Alerts.ToCommaString());
+			Assert.AreEqual("alert from /test.js", browser.ScriptLog.Alerts.ToCommaString());
 		}
 
 		[Test]
@@ -196,7 +198,7 @@ namespace DriverTest
 				},
 			}, "http://localhost/a/test.html");
 
-			Assert.AreEqual("alert from test2.html", browser.ScriptHost.Alerts.ToCommaString());
+			Assert.AreEqual("alert from test2.html", browser.ScriptLog.Alerts.ToCommaString());
 		}
 
 		[Test]
@@ -217,7 +219,7 @@ namespace DriverTest
 				}
 			}, "http://localhost/a/test.html");
 
-			Assert.AreEqual("http://localhost/a/test.html", browser.ScriptHost.Alerts.ToCommaString());
+			Assert.AreEqual("http://localhost/a/test.html", browser.ScriptLog.Alerts.ToCommaString());
 		}
 
 		[Test]
@@ -238,7 +240,7 @@ namespace DriverTest
 				}
 			}, "http://localhost/a/test.html");
 
-			Assert.AreEqual("http://localhost/a/test.html", browser.ScriptHost.Alerts.ToCommaString());
+			Assert.AreEqual("http://localhost/a/test.html", browser.ScriptLog.Alerts.ToCommaString());
 		}
 
 		[Test]
@@ -259,7 +261,7 @@ namespace DriverTest
 				}
 			}, "http://localhost/a/test.html");
 
-			Assert.AreEqual("http", browser.ScriptHost.Alerts.ToCommaString());
+			Assert.AreEqual("http", browser.ScriptLog.Alerts.ToCommaString());
 		}
 
 		[Test]
@@ -451,7 +453,42 @@ namespace DriverTest
 
 			browser.FindElements(By.Id("foo1")).First().Click();
 
-			Assert.AreEqual("1,2", browser.ScriptHost.Alerts.ToCommaString());
+			Assert.AreEqual("1,2", browser.ScriptLog.Alerts.ToCommaString());
+		}
+
+		[Test]
+		public void TestDifferentScriptHostsInDifferentPages()
+		{
+			var browser = SetupTest(new Dictionary<string, string>
+			{
+				{
+					"http://localhost/a/test.html",
+					"<script>var zod = 34;</script>" +
+					"<div id='foo1' onclick='alert(zod)'></div>" +
+					"<div id='foo2' onclick=\"window.location = 'test2.html'\"></div>"
+				},
+				{
+					"http://localhost/a/test2.html",
+
+					"<div id='foo3' onclick='alert(zod)'></div>"
+				}
+
+			}, "http://localhost/a/test.html");
+
+			browser.FindElements(By.Id("foo1")).First().Click();
+			Assert.AreEqual("34", browser.ScriptLog.Alerts.ToCommaString());
+
+			browser.FindElements(By.Id("foo2")).First().Click();
+			Assert.AreEqual("34", browser.ScriptLog.Alerts.ToCommaString());
+
+			try
+			{
+				browser.FindElements(By.Id("foo3")).First().Click();
+				Assert.Fail("Should result in script engine exception");
+			}
+			catch (ScriptEngineException e)
+			{
+			}
 		}
 
 		private SimpleBrowserDriver SetupTest(IDictionary<string, string> pages, string startUrl)

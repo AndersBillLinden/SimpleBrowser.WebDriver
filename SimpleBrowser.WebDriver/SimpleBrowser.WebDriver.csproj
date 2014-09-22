@@ -65,6 +65,7 @@
     <Compile Include="ScriptEngine\DOM\WindowLocation.cs" />
     <Compile Include="ScriptEngine\ScriptHost.cs" />
     <Compile Include="ScriptEngine\DOM\Window.cs" />
+    <Compile Include="ScriptEngine\ScriptLog.cs" />
     <Compile Include="SimpleBrowserDriver.cs" />
     <Compile Include="SimpleCoordinates.cs" />
     <Compile Include="SimpleKeyboard.cs" />
