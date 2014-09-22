@@ -30,5 +30,13 @@ namespace SimpleBrowser.WebDriver.ScriptEngine.DOM
 				_browser.Navigate().GoToUrl(uri);
 			}
 		}
+
+		public WindowHistory history
+		{
+			get
+			{
+				return new WindowHistory(_browser.Browser);
+			}
+		}
 	}
 }

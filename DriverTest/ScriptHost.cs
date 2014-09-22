@@ -331,7 +331,7 @@ namespace DriverTest
 						"window.location = 'test2.html';" +
 					"}" +
 					"</script>" +
-					"<div id='foo' onclick='goto_next_page()'></div"
+					"<div id='foo' onclick='goto_next_page()'></div>"
 				},
 				{
 					"http://localhost/a/test2.html",
@@ -347,12 +347,112 @@ namespace DriverTest
 			var depth2 = browser.Browser.NavigationHistory.Count();
 
 			browser.Navigate().Back();
-			var depth3 = browser.Browser.NavigationHistory.Count();
 
 			Assert.AreEqual(depth + 1, depth2);
-			//Assert.AreEqual(depth, depth3);
 		}
 
+		[Test]
+		public void TestHistoryGoMinusOne()
+		{
+			var browser = SetupTest(new Dictionary<string, string>
+			{
+				{
+					"http://localhost/a/test.html",
+
+					"<div id='foo1' onclick=\"window.location = 'test2.html'\"></div>"
+				},
+				{
+					"http://localhost/a/test2.html",
+
+					"<div id='foo2' onclick='window.history.go(-1)'></div>"
+				}
+
+			}, "http://localhost/a/test.html");
+
+			Assert.AreEqual("http://localhost/a/test.html", browser.Url);
+
+			browser.FindElements(By.Id("foo1")).First().Click();
+			Assert.AreEqual("http://localhost/a/test2.html", browser.Url);
+
+			browser.FindElements(By.Id("foo2")).First().Click();
+			Assert.AreEqual("http://localhost/a/test.html", browser.Url);
+		}
+
+		[Test]
+		public void TestHistoryGoBack()
+		{
+			var browser = SetupTest(new Dictionary<string, string>
+			{
+				{
+					"http://localhost/a/test.html",
+
+					"<div id='foo1' onclick=\"window.location = 'test2.html'\"></div>"
+				},
+				{
+					"http://localhost/a/test2.html",
+
+					"<div id='foo2' onclick='window.history.back()'></div>"
+				}
+
+			}, "http://localhost/a/test.html");
+
+			Assert.AreEqual("http://localhost/a/test.html", browser.Url);
+
+			browser.FindElements(By.Id("foo1")).First().Click();
+			Assert.AreEqual("http://localhost/a/test2.html", browser.Url);
+
+			browser.FindElements(By.Id("foo2")).First().Click();
+			Assert.AreEqual("http://localhost/a/test.html", browser.Url);
+		}
+
+		[Test]
+		public void TestHistoryGoForward()
+		{
+			var browser = SetupTest(new Dictionary<string, string>
+			{
+				{
+					"http://localhost/a/test.html",
+
+					"<div id='foo1' onclick=\"window.location = 'test2.html'\"></div>" +
+					"<div id='foo3' onclick=\"window.history.forward();\"></div>"
+				},
+				{
+					"http://localhost/a/test2.html",
+
+					"<div id='foo2' onclick='window.history.back()'></div>"
+				}
+
+			}, "http://localhost/a/test.html");
+
+			browser.FindElements(By.Id("foo1")).First().Click();
+			browser.FindElements(By.Id("foo2")).First().Click();
+			browser.FindElements(By.Id("foo3")).First().Click();
+			Assert.AreEqual("http://localhost/a/test2.html", browser.Url);
+		}
+
+		[Test]
+		public void TestHistoryLength()
+		{
+			var browser = SetupTest(new Dictionary<string, string>
+			{
+				{
+					"http://localhost/a/test.html",
+
+					"<script>alert(window.history.length);</script>" +
+					"<div id='foo1' onclick=\"window.location = 'test2.html'\"></div>"
+				},
+				{
+					"http://localhost/a/test2.html",
+
+					"<script>alert(window.history.length);</script>"
+				}
+
+			}, "http://localhost/a/test.html");
+
+			browser.FindElements(By.Id("foo1")).First().Click();
+
+			Assert.AreEqual("1,2", browser.ScriptHost.Alerts.ToCommaString());
+		}
 
 		private SimpleBrowserDriver SetupTest(IDictionary<string, string> pages, string startUrl)
 		{
